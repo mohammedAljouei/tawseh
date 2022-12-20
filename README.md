@@ -1,6 +1,6 @@
-# flutter_application_1
+# Tawseh
 
-A new Flutter project.
+A new Flutter project. connect and go!
 
 ## Getting Started
 
