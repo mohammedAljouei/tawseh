@@ -1,9 +1,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.flutter_application_1">
+   <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+   <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
    <application
         android:label="flutter_application_1"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+        <meta-data android:name="com.google.android.geo.AIzaSyD-UyzNDWGIscz9POkB1ffMvZXYqSnH-i8"
+                   android:value="ce3bgcdEUWpTYFZ70pT9SLPUCcQ="/>
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -31,8 +35,8 @@
             android:name="flutterEmbedding"
             android:value="2" />   
         <!-- Mjouei added it for google maps -->
-        <meta-data 
-            android:name="com.google.android.geo.AIzaSyD-UyzNDWGIscz9POkB1ffMvZXYqSnH-i8"
-            android:value="AIzaSyD-UyzNDWGIscz9POkB1ffMvZXYqSnH-i8"/>
+
+
     </application>
 </manifest>
+
