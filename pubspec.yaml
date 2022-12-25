@@ -43,6 +43,7 @@ dependencies:
   google_maps_flutter: ^2.2.1
   cloud_firestore: ^4.2.0
   flutter_secure_storage: ^7.0.1
+  webview_flutter:
   
 
 dev_dependencies:

@@ -2,12 +2,15 @@
     package="com.example.flutter_application_1">
    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+   <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
    <application
         android:label="flutter_application_1"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
-        <meta-data android:name="com.google.android.geo.AIzaSyD-UyzNDWGIscz9POkB1ffMvZXYqSnH-i8"
-                   android:value="ce3bgcdEUWpTYFZ70pT9SLPUCcQ="/>
+        android:icon="@mipmap/ic_launcher"
+        android:enableOnBackInvokedCallback="true"
+        >
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -24,6 +27,10 @@
               android:name="io.flutter.embedding.android.NormalTheme"
               android:resource="@style/NormalTheme"
               />
+
+            <meta-data android:name="com.google.android.geo.API_KEY"
+               android:value="AIzaSyD-UyzNDWGIscz9POkB1ffMvZXYqSnH-i8"/>
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
