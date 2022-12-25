@@ -15,36 +15,68 @@ import 'home.dart';
 class Auth extends StatelessWidget {
   Auth({super.key});
   final myControllerUserName = TextEditingController();
+  final myControllerPass = TextEditingController();
 
-  Future<void> addUserPoints(String userId) async {
+  Future<void> addUserPoints(String userId, BuildContext context) async {
     CollectionReference points =
         FirebaseFirestore.instance.collection('points');
 
-    points.add({'userId': userId, 'lang': 'sdd', 'lat': 'sss'});
+    points.add({'userId': userId, 'long': 'xxx', 'lat': 'xxx'});
+
+    // ignore: no_leading_underscores_for_local_identifiers
+    AndroidOptions _getAndroidOptions() => const AndroidOptions(
+          encryptedSharedPreferences: true,
+        );
+    final storage = FlutterSecureStorage(aOptions: _getAndroidOptions());
+
+// Write value
+    await storage.write(key: 'userId', value: userId);
+    // ignore: use_build_context_synchronously
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => Home()),
+    );
+
+// Read value
+    //String? value = await storage.read(key: 'test');
+
+// Read all values
+    //Map<String, String> allValues = await storage.readAll();
+
+// Delete value
+    // await storage.delete(key: key);
+
+// Delete all
+    //await storage.deleteAll();
   }
 
-  Future<void> addUser(String username, BuildContext context) async {
-    CollectionReference users = FirebaseFirestore.instance.collection('users');
+  void addUser(String userName, String pass, BuildContext context) async {
+    List<DocumentSnapshot> documentList;
+    // check if user exist
+    documentList = (await FirebaseFirestore.instance
+            .collection("users")
+            .where("username", isEqualTo: userName)
+            .get())
+        .docs;
 
-    await users.add({
-      'username': username,
-    }).then((value) => checkUserExist(value.id, context));
-
-    print('test');
-  }
-
-  // do not FORGET about points
-
-  Future<void> checkUserExist(String userId, BuildContext context) async {
-    CollectionReference users = FirebaseFirestore.instance.collection('users');
-
-    users.doc(userId).get().then((DocumentSnapshot documentSnapshot) async {
-      if (documentSnapshot.exists) {
-        print(documentSnapshot.data());
-        print('sx');
-      } else {
-        // untill now NO WAY ENTER HERE
-        // Create storage
+    if (documentList.isEmpty) {
+      // no such user
+      CollectionReference users =
+          FirebaseFirestore.instance.collection('users');
+      await users.add({
+        'username': userName,
+        'pass': pass,
+      }).then((value) => addUserPoints(value.id, context));
+    } else {
+      // there is a user
+      if (documentList[0]
+              .data()
+              .toString()
+              .split(' ')[1]
+              .toString()
+              .split(',')[0] ==
+          pass) {
+        // log him in
         // ignore: no_leading_underscores_for_local_identifiers
         AndroidOptions _getAndroidOptions() => const AndroidOptions(
               encryptedSharedPreferences: true,
@@ -52,27 +84,18 @@ class Auth extends StatelessWidget {
         final storage = FlutterSecureStorage(aOptions: _getAndroidOptions());
 
 // Write value
-        await storage.write(key: 'userId', value: userId);
+
+        await storage.write(key: 'userId', value: documentList[0].id);
+        print(documentList[0].id);
         // ignore: use_build_context_synchronously
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => Home()),
         );
-
-// Read value
-        //String? value = await storage.read(key: 'test');
-
-// Read all values
-        //Map<String, String> allValues = await storage.readAll();
-
-// Delete value
-        // await storage.delete(key: key);
-
-// Delete all
-        //await storage.deleteAll();
-
+      } else {
+        print('wrong user name or pass');
       }
-    });
+    }
   }
 
   @override
@@ -105,11 +128,12 @@ class Auth extends StatelessWidget {
                   labelText: 'اسم المستخدم',
                 )),
           ),
-          const Padding(
+          Padding(
             padding: EdgeInsets.all(10),
             child: TextField(
+                controller: myControllerPass,
                 obscureText: true,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   labelText: 'كلمة المرور',
                 )),
@@ -121,7 +145,8 @@ class Auth extends StatelessWidget {
                 color: Colors.blue, borderRadius: BorderRadius.circular(20)),
             child: ElevatedButton(
               onPressed: () {
-                addUser(myControllerUserName.text, context);
+                addUser(
+                    myControllerUserName.text, myControllerPass.text, context);
               },
               child: const Text(
                 'دخول',
