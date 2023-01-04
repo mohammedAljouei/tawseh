@@ -31,25 +31,31 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  String? userId;
   String? userName;
   bool checked = false;
 
-  void getUserName() async {
+  void getUserId() async {
     // ignore: no_leading_underscores_for_local_identifiers
     AndroidOptions _getAndroidOptions() => const AndroidOptions(
           encryptedSharedPreferences: true,
         );
     final storage = FlutterSecureStorage(aOptions: _getAndroidOptions());
-    String? value = await storage.read(key: 'userName');
+
+    // await storage.deleteAll(); // delete them all
+    String? value = await storage.read(key: 'userId');
+    String? value2 = await storage.read(key: 'userName');
+
     setState(() {
-      userName = value;
+      userId = value;
+      userName = value2;
     });
   }
 
   @override
   Widget build(BuildContext context) {
     if (!checked) {
-      getUserName();
+      getUserId();
       setState(() {
         checked = true;
       });
@@ -69,7 +75,7 @@ class _MyAppState extends State<MyApp> {
       theme: ThemeData(
         primarySwatch: Colors.green,
       ),
-      home: userName == null ? Auth() : Home(),
+      home: userId == null ? Auth() : Home(userId, userName),
     );
   }
 }

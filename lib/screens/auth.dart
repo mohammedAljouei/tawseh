@@ -17,12 +17,8 @@ class Auth extends StatelessWidget {
   final myControllerUserName = TextEditingController();
   final myControllerPass = TextEditingController();
 
-  Future<void> addUserPoints(String userId, BuildContext context) async {
-    CollectionReference points =
-        FirebaseFirestore.instance.collection('points');
-
-    points.add({'userId': userId, 'long': 'xxx', 'lat': 'xxx'});
-
+  Future<void> addUserPoints(
+      String userId, String userName, BuildContext context) async {
     // ignore: no_leading_underscores_for_local_identifiers
     AndroidOptions _getAndroidOptions() => const AndroidOptions(
           encryptedSharedPreferences: true,
@@ -31,23 +27,12 @@ class Auth extends StatelessWidget {
 
 // Write value
     await storage.write(key: 'userId', value: userId);
+    await storage.write(key: 'userName', value: userName);
     // ignore: use_build_context_synchronously
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => Home()),
+      MaterialPageRoute(builder: (context) => Home(userId, userName)),
     );
-
-// Read value
-    //String? value = await storage.read(key: 'test');
-
-// Read all values
-    //Map<String, String> allValues = await storage.readAll();
-
-// Delete value
-    // await storage.delete(key: key);
-
-// Delete all
-    //await storage.deleteAll();
   }
 
   void addUser(String userName, String pass, BuildContext context) async {
@@ -66,7 +51,7 @@ class Auth extends StatelessWidget {
       await users.add({
         'username': userName,
         'pass': pass,
-      }).then((value) => addUserPoints(value.id, context));
+      }).then((value) => addUserPoints(value.id, userName, context));
     } else {
       // there is a user
       if (documentList[0]
@@ -86,11 +71,13 @@ class Auth extends StatelessWidget {
 // Write value
 
         await storage.write(key: 'userId', value: documentList[0].id);
+        await storage.write(key: 'userName', value: userName);
         print(documentList[0].id);
         // ignore: use_build_context_synchronously
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => Home()),
+          MaterialPageRoute(
+              builder: (context) => Home(documentList[0].id, userName)),
         );
       } else {
         print('wrong user name or pass');
